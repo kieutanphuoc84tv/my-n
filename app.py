@@ -1,8 +1,14 @@
+# -*- coding: utf-8 -*-
+
+# Cài các thư viện trước bằng lệnh pip trong terminal (không trong file .py):
+# pip install streamlit transformers pyngrok torch
+
 import streamlit as st
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from pyngrok import ngrok
 import time
 
-# --- Cấu hình giao diện ---
+# --- Giao diện ứng dụng ---
 st.set_page_config(page_title="Tóm Tắt Văn Bản", page_icon="📝", layout="centered")
 
 # --- CSS LED RGB động + hiệu ứng Liquid Glass ---
@@ -82,7 +88,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Load mô hình T5 ---
+# --- Load mô hình ---
 @st.cache_resource
 def load_model_tokenizer():
     tokenizer = AutoTokenizer.from_pretrained("VietAI/vit5-base-vietnews-summarization")
@@ -127,3 +133,10 @@ if st.button("🚀 Tóm tắt ngay!"):
                 st.error(f"❌ Lỗi khi tóm tắt: {str(e)}")
     else:
         st.warning("⚠️ Vui lòng nhập văn bản trước khi nhấn nút.")
+
+# --- Mở ngrok khi chạy trực tiếp ---
+try:
+    public_url = ngrok.connect(8501)
+    print("🌐 Ứng dụng đang chạy tại:", public_url)
+except Exception as err:
+    print("⚠️ Không thể mở ngrok:", err)
